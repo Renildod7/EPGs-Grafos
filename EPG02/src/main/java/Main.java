@@ -4,62 +4,41 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm.SingleSourcePaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
 public class Main {
 	
 	public static void main(String[] args) {
-		Graph<String, DefaultWeightedEdge> distrito;
-		distrito = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 		
-		addEdge(distrito, "a", "b", 5.0);
-		addEdge(distrito, "a", "c", 4.0);
-		addEdge(distrito, "a", "d", 3.0);
-		addEdge(distrito, "a", "e", 2.0);
-		addEdge(distrito, "a", "f", 1.0);
+		Graph<String, DefaultWeightedEdge> grafo;
+		grafo = new DefaultUndirectedWeightedGraph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class);
+		//grafo = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
 		
-		Set <String> imoveis = new HashSet<>();
-		imoveis.add("b");
-		imoveis.add("c");
-		imoveis.add("d");
-		imoveis.add("e");
-		imoveis.add("f");
-		
-		System.out.println(localizaImovel(distrito,"a", imoveis));
-		
-		addEdge(distrito, "f", "escola", 1.0);
-		addEdge(distrito, "f", "c", 2.0);
-		addEdge(distrito, "f", "d", 3.0);
-		
-		Set <String> imoveis2 = new HashSet<>();
-		imoveis2.add("escola");
-		imoveis2.add("c");
-		imoveis2.add("d");
-		
-		
-		System.out.println(localizaImovel(distrito,"f", imoveis2));
-		
-		System.out.println("importando o grafo");
-		
-		Graph<String, DefaultWeightedEdge> distrito2;
-		distrito2 = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
-		
-		importWeightedGraphCSV(distrito2, "./src/main/resources/Vizinhanca.csv");
+		//importWeightedGraphCSV(grafo, "./src/main/java/test.csv");
+		importWeightedGraphCSV(grafo, "./src/main/resources/Vizinhanca.csv");
 		DefaultWeightedEdge e = new DefaultWeightedEdge();
 		
-		System.out.println(distrito2.vertexSet());
-		System.out.println(distrito2.edgeSet());
+		System.out.println(grafo.vertexSet());
+		System.out.println(grafo.edgeSet());
 		
 		Set <String> imoveis1 = new HashSet<>();
 		imoveis1.add("I1"); imoveis1.add("I2"); imoveis1.add("I3"); imoveis1.add("I4"); imoveis1.add("I5");
+
 		
-		System.out.println(localizaImovel(distrito2, "ESCOLA", distrito2.vertexSet()));
+		for(String s : grafo.vertexSet()) {
+			System.out.println("Mais proximo de " + s + " :" + localizaImovel(grafo, s, grafo.vertexSet()) + System.lineSeparator());
+		}
+
+	//	System.out.println(localizaImovel(grafo, "a", imoveis));
 
 
 		
@@ -86,12 +65,15 @@ public class Main {
 			DijkstraShortestPath<String, DefaultWeightedEdge> dsp = new DijkstraShortestPath<>(grafo);
 			SingleSourcePaths<String, DefaultWeightedEdge> spa = dsp.getPaths(pontodeInteresse);
 			
-			String maisPerto =  "";
-			double menorDistancia = Double.MAX_VALUE;
 			
+			String maisPerto =  "";
+			double menorDistancia = Double.POSITIVE_INFINITY;
+			System.out.println("##########" + pontodeInteresse + "##########");
 			for(String imovel : imoveis) {
-				double dist = dsp.getPathWeight(pontodeInteresse, imovel);
-				System.out.println(imovel + " " + dist);
+				double dist = spa.getWeight(imovel);
+				//double dist = dsp.getPath(pontodeInteresse, imovel).getWeight();
+				
+				System.out.println("Distancia de "+ pontodeInteresse + " ate " + imovel + ": " + dist);
 				
 				if(dist < menorDistancia) {
 					menorDistancia = dist;
@@ -124,6 +106,7 @@ public class Main {
 				DefaultWeightedEdge e = new DefaultWeightedEdge();
 				graph.addEdge(attributes[0], attributes[1], e);
 				graph.setEdgeWeight(e, new Double(attributes[2]).doubleValue());
+				System.out.println( e + " " + graph.getEdgeWeight(e));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

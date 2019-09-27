@@ -4,22 +4,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Set;
 import org.jgrapht.Graph;
-import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm.SingleSourcePaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.alg.shortestpath.ListSingleSourcePathsImpl;
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
+import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.io.CSVFormat;
-import org.jgrapht.io.CSVImporter;
-import org.jgrapht.io.EdgeProvider;
-import org.jgrapht.io.ImportException;
-import org.jgrapht.io.VertexProvider;
+
 
 public class VendaImoveis {
 	
@@ -27,7 +18,7 @@ public class VendaImoveis {
 	
 	VendaImoveis (String fileName) {
 		
-		this.distrito = new DefaultDirectedWeightedGraph<>(DefaultWeightedEdge.class);
+		this.distrito = new DefaultUndirectedWeightedGraph<String, DefaultWeightedEdge>(DefaultWeightedEdge.class);
 		importWeightedGraphCSV(distrito, fileName);
 
 		/* Adicione aqui o c�digo que cria uma instancia da classe grafo desejada a partir de um arquivo
@@ -41,7 +32,7 @@ public class VendaImoveis {
 			DijkstraShortestPath<String, DefaultWeightedEdge> dsp = new DijkstraShortestPath<>(distrito);
 			SingleSourcePaths<String, DefaultWeightedEdge> spa = dsp.getPaths(pontodeInteresse);
 			
-			String maisPerto =  "";
+			String maisPerto =  null;
 			double menorDistancia = Double.MAX_VALUE;
 			
 			for(String imovel : imoveis) {
