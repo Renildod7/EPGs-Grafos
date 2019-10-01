@@ -11,7 +11,6 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.graph.DefaultWeightedEdge;
 
-
 public class VendaImoveis {
 	
 	Graph <String,DefaultWeightedEdge> distrito;
@@ -27,6 +26,15 @@ public class VendaImoveis {
 		 */
 	}
 	
+	/**
+	 * Encontra o imovel mais proximo do ponto de interesse passado por
+	 * parametro e o retorna.
+	 * 
+	 * @param pontodeInteresse A referencia para encontrar o imovel mais proximo
+	 * @param imoveis Conjunto de todos os imoveis no grafo
+	 * 
+	 * @return O imovel mais proximo do ponto de interesse
+	 */
 	public String localizaImovel (String pontodeInteresse, Set <String> imoveis) {
 		if(this.distrito.containsVertex(pontodeInteresse) && !imoveis.isEmpty()) {
 			DijkstraShortestPath<String, DefaultWeightedEdge> dsp = new DijkstraShortestPath<>(distrito);
@@ -55,7 +63,6 @@ public class VendaImoveis {
 		//return null;
 
 	}
-	
 	
 	public static Graph<String,DefaultWeightedEdge> importWeightedGraphCSV 
 		(Graph<String,DefaultWeightedEdge> graph, String filename) {
@@ -89,7 +96,4 @@ public class VendaImoveis {
 		StringReader readergml = new StringReader(contentBuilder.toString());
 		return readergml;
 	}
-	
-	
-
 }
