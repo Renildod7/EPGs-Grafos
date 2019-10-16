@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/renildodm/Área de Trabalho/Grafos/EPGs-Grafos/EPG03/lib/jgrapht-1.3.0.zip"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
