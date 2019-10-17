@@ -65,6 +65,14 @@ public class Main {
 	   		new HarmonicCentrality <> (grafo);
   	   	printOrderedVertexMeasures (hc.getScores(),0,true);
 	    
+  	   	
+  	   	
+  	   	
+  	   	
+  	   	
+  	   	
+  	   	
+  	   	
   	   	ClusteringCoefficient <DefaultVertex,RelationshipEdge> cluster = 
 	    	new ClusteringCoefficient <> (grafo);
   	   	System.out.println("\n\nCluster Coefficient: " + cluster.getGlobalClusteringCoefficient());
