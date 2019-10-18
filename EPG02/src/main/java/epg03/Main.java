@@ -33,11 +33,11 @@ public class Main {
 		grafo = new DefaultUndirectedWeightedGraph<String,DefaultEdge>(DefaultEdge.class);
 		importDefaultGraphGML(grafo, "./src/main/resources/antcolony1000.gml");
 		
-		System.out.println("As 5 melhores formigas que atuão na condução de imformação são: " + maiorGrau(grafo));
+		System.out.println("As 5 melhores formigas que atuam na condução de informação são: " + maiorGrau(grafo));
 
 		System.out.println("As 5 formigas mais influentes são: " + centrais(grafo));
 		
-		System.out.println("O coeficiente de centalidade do grafo é : " + clusteringCoefficient(grafo));
+		System.out.println("O coeficiente de centralidade do grafo é : " + clusteringCoefficient(grafo));
 		
 		System.out.println(String.format("O coeficiente de assortatividade do grafo é: %.3f", assortativityCoefficient(grafo)));
 		
