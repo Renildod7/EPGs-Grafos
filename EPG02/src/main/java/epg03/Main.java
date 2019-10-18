@@ -8,25 +8,14 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import org.jgrapht.Graph;
-import org.jgrapht.GraphTests;
-import org.jgrapht.Graphs;
-import org.jgrapht.alg.connectivity.BiconnectivityInspector;
-import org.jgrapht.alg.scoring.AlphaCentrality;
-import org.jgrapht.alg.scoring.BetweennessCentrality;
 import org.jgrapht.alg.scoring.ClosenessCentrality;
 import org.jgrapht.alg.scoring.ClusteringCoefficient;
-import org.jgrapht.alg.scoring.HarmonicCentrality;
+import org.jgrapht.alg.util.Pair;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.io.EdgeProvider;
 import org.jgrapht.io.GmlImporter;
@@ -40,50 +29,108 @@ import org.jgrapht.io.VertexProvider;
 public class Main {
 
 	public static void main(String[] args) {
-		Graph<DefaultVertex,RelationshipEdge> grafo;
-		grafo = new DefaultUndirectedWeightedGraph<DefaultVertex,RelationshipEdge>(RelationshipEdge.class);
-		importGraphGML(grafo, "./src/main/resources/antcolony1000.gml");
+		Graph<String,DefaultEdge> grafo;
+		grafo = new DefaultUndirectedWeightedGraph<String,DefaultEdge>(DefaultEdge.class);
+		importDefaultGraphGML(grafo, "./src/main/resources/antcolony1000.gml");
 		
-		centrais(grafo);
+		System.out.println("As 5 melhores formigas que atuão na condução de imformação são: " + maiorGrau(grafo));
+
+		System.out.println("As 5 formigas mais influentes são: " + centrais(grafo));
 		
-		agrupamento(grafo);
+		System.out.println("O coeficiente de centalidade do grafo é : " + clusteringCoefficient(grafo));
 		
-		System.out.println(assortativityCoefficient(grafo));
+		System.out.println(String.format("O coeficiente de assortatividade do grafo é: %.3f", assortativityCoefficient(grafo)));
+		
+		
+		
+		
 		
 		
 		
 	}
 	
-	public static void agrupamento(Graph<DefaultVertex,RelationshipEdge> grafo) {
-		ClusteringCoefficient <DefaultVertex,RelationshipEdge> cluster = new ClusteringCoefficient <> (grafo);
-		
-		System.out.println(cluster.getGlobalClusteringCoefficient());
-	}
+	/**
+	 * Metodo responsavel por determinar os cinco verticer com o maior grau do grafo
+	 * 
+	 * @param grafo Grafo
+	 * @return String com os 5 vertices de maior grau
+	 */
 	
-	public static void centrais(Graph<DefaultVertex,RelationshipEdge> grafo) {
-		ClosenessCentrality<DefaultVertex, RelationshipEdge> cc = new ClosenessCentrality<DefaultVertex, RelationshipEdge>(grafo);
+	public static String maiorGrau(Graph<String,DefaultEdge> grafo) {		
+		ArrayList<Pair<String, Integer>> list = new ArrayList<>();
 		
-		double valor = Double.MIN_VALUE;
-		DefaultVertex vertice = null;
-		Map<DefaultVertex, Double> map = cc.getScores();
+		for(String v : grafo.vertexSet()) {
+			list.add(new Pair<String, Integer>(v, grafo.degreeOf(v)));
+		}
+
 		
-		ArrayList<Entry<DefaultVertex, Double>> list = new ArrayList<>();
-		list.addAll(map.entrySet());
-		Collections.sort(list, new Comparator<Entry<DefaultVertex, Double>>()
+		Collections.sort(list, new Comparator<Pair<String, Integer>>()
 		
 		{
-			public int compare(Entry<DefaultVertex, Double> entry1, Entry<DefaultVertex, Double> entry2) {
+			public int compare(Pair<String, Integer> pair1, Pair<String, Integer> pair2) {
+				return pair1.getSecond().compareTo(pair2.getSecond()) * -1;
+			}
+			
+		} );
+		
+		String retorno = "";
+		
+		for(int i = 0; i < 4; i++) {
+			retorno+=list.get(i).getFirst() + " ";
+		}
+		retorno+=list.get(5).getFirst();
+		
+		return retorno;
+		
+		
+	}
+	
+	
+	/**
+	 * Metodo responsavel por determinar o coeficiente de centralidade do grafo
+	 * 
+	 * @param grafo Grafo
+	 * @return O ClusteringCoefficient do grafo
+	 */
+	public static String clusteringCoefficient(Graph<String,DefaultEdge> grafo) {
+		ClusteringCoefficient <String,DefaultEdge> cluster = new ClusteringCoefficient <> (grafo);
+		
+		return String.format("%.3f", cluster.getGlobalClusteringCoefficient());
+	}
+	
+	
+	/**
+	 * Metodo reponsavel por determinar os 5 vertices mais cetrais do grafo
+	 * 
+	 * @param grafo Grafo
+	 * @return String com os 5 vertices mais centrais
+	 */
+	public static String centrais(Graph<String,DefaultEdge> grafo) {
+		ClosenessCentrality<String,DefaultEdge> cc = new ClosenessCentrality<String,DefaultEdge>(grafo);
+		Map<String, Double> map = cc.getScores();
+		
+		ArrayList<Entry<String, Double>> list = new ArrayList<>();
+		list.addAll(map.entrySet());
+		Collections.sort(list, new Comparator<Entry<String, Double>>()
+		
+		{
+			public int compare(Entry<String, Double> entry1, Entry<String, Double> entry2) {
 				return entry1.getValue().compareTo(entry2.getValue()) * -1;
 			}
 			
 		} );
 		
+		String retorno = "";
 		
-		for(int i = 0; i < 5; i++) {
-			System.out.println(Integer.parseInt(list.get(i).getKey().getId()) +1 );
+		for(int i = 0; i < 4; i++) {
+			retorno+=list.get(i).getKey()+ " ";
 		}
+		retorno+= list.get(5).getKey();
+		
+		return retorno;
 		
 	}
+	
 	
     static <V,E> double assortativityCoefficient (Graph <V, E> graph) {
         // from: https://github.com/Infeligo/jgrapht-metrics/blob/master/src/main/java/org/jgrapht/metrics/AssortativityCoefficientMetric.java
@@ -104,17 +151,12 @@ public class Main {
         
         return (n1 - n2) / (dn - n2);
     }
-
 	
 	
-	
-	
-	
-	public static Graph<DefaultVertex,RelationshipEdge> importGraphGML (Graph<DefaultVertex,RelationshipEdge> graph, String filename) {
-		VertexProvider<DefaultVertex> vp1 = (label, attributes) -> new DefaultVertex(label, attributes);
-		EdgeProvider<DefaultVertex, RelationshipEdge> ep1 = (from, to, label, attributes) -> new RelationshipEdge(from,
-				to, attributes);
-		GmlImporter<DefaultVertex, RelationshipEdge> gmlImporter = new GmlImporter<>(vp1, ep1);
+	public static Graph<String,DefaultEdge> importDefaultGraphGML (Graph<String,DefaultEdge> graph, String filename) {
+		VertexProvider<String> vp1 = (label, attributes) -> label;
+		EdgeProvider<String, DefaultEdge> ep1 = (from, to, label, attributes) -> new DefaultEdge();
+		GmlImporter<String, DefaultEdge> gmlImporter = new GmlImporter<>(vp1, ep1);
 		try {
 			gmlImporter.importGraph(graph, readFile(filename));
 		} catch (ImportException e) {
@@ -122,6 +164,7 @@ public class Main {
 		}
 		return graph;
 	}
+	
 
 	static Reader readFile(String filename) {
 		StringBuilder contentBuilder = new StringBuilder();
