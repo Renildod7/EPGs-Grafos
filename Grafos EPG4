@@ -1,0 +1,40 @@
+1) sera feita uma busca das relações do tipo paysTo cujo vertice de origem é do tipo CreditCard e o vertice de destino do tipo Company que possuem o atributo status como "disputed", e seram retornados os vertices de orirem das relações ordenados do menor para o maior de acordo com o atributo idNumber.
+
+match (cc:CreditCard)-[:paysTo {status:"disputed"}]->(:Company) return cc order by cc.idNumber
+
+
+2) primeiro sera feita uma busca das relações do tipo paysTo cujo vertice de origem é do tipo CreditCard e o vertice de destino do tipo Company que possuem o atributo status "disputed", depois sera feita uma busca pelas relações do tipo belongsTo que possuem os vertices de origem igual a algum dos vertices da primeira busca e os vertices de destino do tipo Person e seram retornados os atributos lastname e fristname no vertice de origem da segunda busca ordenados de acordo com o atributo lastname.
+
+match (cc:CreditCard)-[pt:paysTo{status:"disputed"}]->(:Company) match (cc)-[:belongsTo]->(p:Person) return p.lastname,p.firstname order by p.lastname
+
+
+
+3) primeiro sera feita um busca por vertices do tipo CreditCard, onde estes vertices não são vertices de origem em ralações do tipo paysTo que possuem o vertice de destino do tipo Company, depois sera feita uma busca por relações do tipo belongsTo que possuem vertices de origem igual a algum dos vertices da primeira busca e os vertices de destino do tipo Person e serão retornado os vertices de origem da segunda busca.
+
+match(cc:CreditCard) where not (cc)-[:paysTo]->(:Company) match (cc)-[:belongsTo]->(p:Person) return p
+
+
+
+
+4) sera feita uma busca por relações do tipo paysTo onde os vertices de origem são do tipo CreditCart e os vertices de destino são do tipo Company, depois seram retornados os vertices de destico e a quantidade de relações do tipo paysTo que cada vertice possue ordenados em ordem decrescente pela quantidade pela quantidade de relações do tipo paysTo com um limite de dois vertices.
+
+match (:CreditCard)-[:paysTo{status:"disputed"}]->(c:Company) return c,count(()-[:paysTo]->(c)) order by count(()-[:paysTo]->(c)) desc limit 2
+
+
+
+
+5) sera feita uma busca por relações do tipo belongsTo com origem do tipo CreditCard e destino do tipo Person e por relações do tipo paysTo com origem igual a origem da relação anterior e destino do tipo Company, onde o atributo country do destino da primeira relação é diferente do atributo country do destino da segunda relação e serão retornado os atrubutos lastname e country do destino da primeira relação e os atributos name e country do destino da segunda relação ordenados de acordo com o atributo lastname do destino da primeira relação.
+
+match (cc:CreditCard)-[:belongsTo]->(p:Person), (cc)-[:paysTo]->(c:Company) where not p.country = c.country return p.lastname,p.country,c.name,c.country order by p.lastname
+
+
+
+
+
+6) sera feita uma busca por relações do tipo belongsTo com origem do tipo CreditCard e destino do tipo Person e por relações do tipo paysTo que possuem o atributo status como "disputed" com origem igual a origem da relação anterior e destino do tipo Company e sera retornada a quantidade de relações do tipo paysTo e o atributo country do destino da primeira relação ordenados em ordem decrescentede acordo com a quantidade de relações do tipo paysTo.
+
+match (cc:CreditCard)-[:belongsTo]->(p:Person), (cc)-[pays:paysTo{status:"disputed"}]->(c:Company) return count(pays),p.country order by count(pays) desc
+
+
+
+
